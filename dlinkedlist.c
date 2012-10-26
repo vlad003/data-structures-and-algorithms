@@ -81,17 +81,10 @@ int item_at(DLINKEDLIST *dll, int index) {
 
 void remove_at(DLINKEDLIST *dll, int index) {
     NODE *curr = dll->begin;
-    printf("i %d\n", index);
-    printf("x %d\n", curr);
-
-    printf("dd %d\n", curr->data);
 
     for (int x = 0; x < index; ++x) {
-        printf("%d ", curr->data);
         curr = curr->next;
     }
-
-    putchar('\n');
 
     if (curr->prev != NULL)
         (curr->prev)->next = curr->next;
