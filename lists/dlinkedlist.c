@@ -17,12 +17,12 @@ void append(DLINKEDLIST *dll, int item) {
 
     else if (dll->begin == NULL) {
         dll->begin = temp;
+        temp->prev = NULL;
     }
 
     dll->end = temp;
 
     dll->size++;
-    
 }
 
 void push(DLINKEDLIST *dll, int item) {
@@ -80,7 +80,7 @@ int item_at(DLINKEDLIST *dll, int index) {
 }
 
 void remove_at(DLINKEDLIST *dll, int index) {
-    NODE *curr = dll->begin;
+    NODE *curr = dll->begin;  
 
     for (int x = 0; x < index; ++x) {
         curr = curr->next;
@@ -100,8 +100,3 @@ void remove_at(DLINKEDLIST *dll, int index) {
 
     dll->size--;
 }
-    
-
-    
-
-
