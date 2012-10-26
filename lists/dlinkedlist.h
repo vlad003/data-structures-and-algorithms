@@ -18,4 +18,5 @@ int item_at(DLINKEDLIST *dll, int index);
 int front(DLINKEDLIST *dll);
 void push(DLINKEDLIST *dll, int item); // adds to the front
 void remove_at(DLINKEDLIST *dll, int index);
-// range(DLINKEDLIST *dll, int begin_idx, int end_idx);
+// begin_idx is included, end_idx is not
+DLINKEDLIST* range(DLINKEDLIST *dll, int begin_idx, int end_idx);

@@ -100,3 +100,23 @@ void remove_at(DLINKEDLIST *dll, int index) {
 
     dll->size--;
 }
+
+DLINKEDLIST* range(DLINKEDLIST *dll, int begin_idx, int end_idx) {
+    NODE *curr = dll->begin;
+
+    for (int x = 0; x < begin_idx; ++x) {
+        curr = curr->next;
+    }
+
+    DLINKEDLIST *dll_range = malloc(sizeof(DLINKEDLIST));
+    dll_range->begin = NULL;
+    dll_range->end = NULL;
+    dll_range->size = 0;
+
+    for (int x = begin_idx; x < end_idx; ++x) {
+        append(dll_range, curr->data);
+        curr = curr->next;
+    }
+
+    return dll_range;
+}
