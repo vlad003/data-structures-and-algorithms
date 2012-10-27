@@ -1,8 +1,6 @@
 #include <stdlib.h>
-#include <stdio.h>
 #include <stdbool.h>
 #include "dlinkedlist.h"
-
 
 void append(DLINKEDLIST *dll, int item) {
     NODE *temp = malloc(sizeof(NODE));
@@ -147,8 +145,3 @@ void insert(DLINKEDLIST *dll, int index, int item) {
     }
 
 }
-        
-
-
-
-
