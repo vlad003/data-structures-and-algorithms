@@ -20,4 +20,5 @@ void push(DLINKEDLIST *dll, int item); // adds to the front
 void remove_at(DLINKEDLIST *dll, int index);
 // begin_idx is included, end_idx is not
 DLINKEDLIST* range(DLINKEDLIST *dll, int begin_idx, int end_idx);
+// if index is <=0, it pushes. index >= dll->size appends;
 void insert(DLINKEDLIST *dll, int index, int item);
