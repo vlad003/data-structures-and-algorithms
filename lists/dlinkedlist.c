@@ -120,3 +120,35 @@ DLINKEDLIST* range(DLINKEDLIST *dll, int begin_idx, int end_idx) {
 
     return dll_range;
 }
+
+void insert(DLINKEDLIST *dll, int index, int item) {
+    if (index >= dll->size) {
+        append(dll, item);
+    }
+    else if (index <= 0) {
+        push(dll, item);
+    }
+    else {
+        NODE *temp = malloc(sizeof(NODE));
+        temp->data = item;
+
+        NODE *curr = dll->begin;
+
+        for (int x = 0; x < index; ++x) {
+            curr = curr->next;
+        }
+
+        temp->next = curr;
+        temp->prev = curr->prev;
+        (curr->prev)->next = temp;
+        curr->prev = temp;
+
+        dll->size++;
+    }
+
+}
+        
+
+
+
+
