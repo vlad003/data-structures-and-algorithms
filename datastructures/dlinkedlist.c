@@ -2,10 +2,15 @@
 #include <stdbool.h>
 #include "dlinkedlist.h"
 
-void append(DLINKEDLIST *dll, int item) {
+RET_STATUS dll_append(DLINKEDLIST *dll, int data) {
+    if (dll == NULL)
+        return ST_FAIL_EMPTY;
+
     NODE *temp = malloc(sizeof(NODE));
+    if (temp == NULL)
+        return ST_FAIL_MALLOC;
     
-    temp->data = item;
+    temp->data = data;
     temp->prev = dll->end;
     temp->next = NULL;
 
@@ -21,12 +26,18 @@ void append(DLINKEDLIST *dll, int item) {
     dll->end = temp;
 
     dll->size++;
+    return ST_OK;
 }
 
-void push(DLINKEDLIST *dll, int item) {
-    NODE *temp = malloc(sizeof(NODE));
+RET_STATUS dll_push(DLINKEDLIST *dll, int data) {
+    if (dll == NULL)
+        return ST_FAIL_EMPTY;
 
-    temp->data = item;
+    NODE *temp = malloc(sizeof(NODE));
+    if (temp == NULL)
+        return ST_FAIL_MALLOC;
+
+    temp->data = data;
     temp->next = dll->begin;
     temp->prev = NULL;
 
@@ -40,9 +51,10 @@ void push(DLINKEDLIST *dll, int item) {
     dll->begin = temp;
 
     dll->size++;
+    return ST_OK;
 }
 
-int pop(DLINKEDLIST *dll) {
+RET_STATUS dll_pop(DLINKEDLIST *dll, int *ret_value) {
     if (dll->begin != NULL) {
         NODE *temp = dll->begin;
         dll->begin = (dll->begin)->next;
@@ -54,30 +66,42 @@ int pop(DLINKEDLIST *dll) {
 
         dll->size--;
 
-        return data;
+        *ret_value = data;
+        return ST_OK;
     }
+    return ST_FAIL_EMPTY;
 }
 
-bool empty(DLINKEDLIST *dll) {
+RET_STATUS dll_empty(DLINKEDLIST *dll) {
+    if (dll == NULL)
+        return ST_FAIL_EMPTY;
     if (dll->size <= 0) 
-        return true;
-    return false;
+        return ST_OK;
+    return ST_FAIL_EMPTY;
 }
 
-int front(DLINKEDLIST *dll) {
-    return (dll->begin)->data;
+RET_STATUS dll_front(DLINKEDLIST *dll, int *ret_value) {
+    if (dll == NULL || dll->begin == NULL)
+        return ST_FAIL_EMPTY;
+    *ret_value = (dll->begin)->data;
+    return ST_OK;
 }
 
-int item_at(DLINKEDLIST *dll, int index) {
+RET_STATUS dll_item_at(DLINKEDLIST *dll, int index, int *ret_value) {
+    if (dll == NULL || dll->begin == NULL)
+        return ST_FAIL_EMPTY;
     NODE *curr = dll->begin;
 
     for (int x = 0; x < index; ++x)
         curr = curr->next;
 
-    return curr->data;
+    *ret_value = curr->data;
+    return ST_OK;
 }
 
-void remove_at(DLINKEDLIST *dll, int index) {
+RET_STATUS dll_remove_at(DLINKEDLIST *dll, int index) {
+    if (dll == NULL || dll->begin == NULL)
+        return ST_FAIL_EMPTY;
     NODE *curr = dll->begin;  
 
     for (int x = 0; x < index; ++x) {
@@ -97,37 +121,43 @@ void remove_at(DLINKEDLIST *dll, int index) {
     free(curr);
 
     dll->size--;
+    return ST_OK;
 }
 
-DLINKEDLIST* range(DLINKEDLIST *dll, int begin_idx, int end_idx) {
+RET_STATUS dll_range(DLINKEDLIST *dll, int begin_idx, int end_idx, DLINKEDLIST *new_list) {
+    if (dll == NULL || dll->begin == NULL)
+        return ST_FAIL_EMPTY;
     NODE *curr = dll->begin;
 
     for (int x = 0; x < begin_idx; ++x) {
         curr = curr->next;
     }
 
-    DLINKEDLIST *dll_range = malloc(sizeof(DLINKEDLIST));
-    dll_range->begin = NULL;
-    dll_range->end = NULL;
-    dll_range->size = 0;
+    if (!dll_empty(new_list))
+        return ST_FAIL_NOT_EMPTY;
 
     for (int x = begin_idx; x < end_idx; ++x) {
-        append(dll_range, curr->data);
+        dll_append(new_list, curr->data);
         curr = curr->next;
     }
 
-    return dll_range;
+    return ST_OK;
 }
 
-void insert(DLINKEDLIST *dll, int index, int item) {
+RET_STATUS dll_insert(DLINKEDLIST *dll, int index, int item) {
+    if (dll == NULL)
+        return ST_FAIL_EMPTY;
+
     if (index >= dll->size) {
-        append(dll, item);
+        dll_append(dll, item);
     }
     else if (index <= 0) {
-        push(dll, item);
+        dll_push(dll, item);
     }
     else {
         NODE *temp = malloc(sizeof(NODE));
+        if (temp == NULL)
+            return ST_FAIL_MALLOC;
         temp->data = item;
 
         NODE *curr = dll->begin;
@@ -143,5 +173,6 @@ void insert(DLINKEDLIST *dll, int index, int item) {
 
         dll->size++;
     }
+    return ST_OK;
 
 }

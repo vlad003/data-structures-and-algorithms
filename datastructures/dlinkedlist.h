@@ -1,3 +1,5 @@
+#include "errors.h"
+
 struct node {
     int data;
     struct node *next, *prev;
@@ -11,14 +13,14 @@ struct dlinkedlist {
 typedef struct node NODE;
 typedef struct dlinkedlist DLINKEDLIST;
 
-void append(DLINKEDLIST *dll, int data); // same as enqueue
-int pop(DLINKEDLIST *dll); // same as dequeue
-bool empty(DLINKEDLIST *dll);
-int item_at(DLINKEDLIST *dll, int index);
-int front(DLINKEDLIST *dll);
-void push(DLINKEDLIST *dll, int item); // adds to the front
-void remove_at(DLINKEDLIST *dll, int index);
+RET_STATUS dll_append(DLINKEDLIST *dll, int data); // same as enqueue
+RET_STATUS dll_push(DLINKEDLIST *dll, int data); // adds to the front
+RET_STATUS dll_pop(DLINKEDLIST *dll, int *ret_value); // same as dequeue
+RET_STATUS dll_empty(DLINKEDLIST *dll);
+RET_STATUS dll_item_at(DLINKEDLIST *dll, int index, int *ret_value);
+RET_STATUS dll_front(DLINKEDLIST *dll, int *ret_value);
+RET_STATUS dll_remove_at(DLINKEDLIST *dll, int index);
 // begin_idx is included, end_idx is not
-DLINKEDLIST* range(DLINKEDLIST *dll, int begin_idx, int end_idx);
+RET_STATUS dll_range(DLINKEDLIST *dll, int begin_idx, int end_idx, DLINKEDLIST *new_list);
 // if index is <=0, it pushes. index >= dll->size appends;
-void insert(DLINKEDLIST *dll, int index, int item);
+RET_STATUS dll_insert(DLINKEDLIST *dll, int index, int item);
