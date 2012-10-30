@@ -13,14 +13,14 @@ struct dlinkedlist {
 typedef struct node NODE;
 typedef struct dlinkedlist DLINKEDLIST;
 
-RET_STATUS append(DLINKEDLIST *dll, int data); // same as enqueue
-RET_STATUS push(DLINKEDLIST *dll, int data); // adds to the front
-RET_STATUS pop(DLINKEDLIST *dll, int *ret_value); // same as dequeue
-bool empty(DLINKEDLIST *dll);
-RET_STATUS item_at(DLINKEDLIST *dll, int index, int *ret_value);
-RET_STATUS front(DLINKEDLIST *dll, int *ret_value);
-RET_STATUS remove_at(DLINKEDLIST *dll, int index);
+RET_STATUS dll_append(DLINKEDLIST *dll, int data); // same as enqueue
+RET_STATUS dll_push(DLINKEDLIST *dll, int data); // adds to the front
+RET_STATUS dll_pop(DLINKEDLIST *dll, int *ret_value); // same as dequeue
+RET_STATUS dll_empty(DLINKEDLIST *dll);
+RET_STATUS dll_item_at(DLINKEDLIST *dll, int index, int *ret_value);
+RET_STATUS dll_front(DLINKEDLIST *dll, int *ret_value);
+RET_STATUS dll_remove_at(DLINKEDLIST *dll, int index);
 // begin_idx is included, end_idx is not
-RET_STATUS range(DLINKEDLIST *dll, int begin_idx, int end_idx, DLINKEDLIST *new_list);
+RET_STATUS dll_range(DLINKEDLIST *dll, int begin_idx, int end_idx, DLINKEDLIST *new_list);
 // if index is <=0, it pushes. index >= dll->size appends;
-RET_STATUS insert(DLINKEDLIST *dll, int index, int item);
+RET_STATUS dll_insert(DLINKEDLIST *dll, int index, int item);
