@@ -133,11 +133,11 @@ RET_STATUS dll_range(DLINKEDLIST *dll, int begin_idx, int end_idx, DLINKEDLIST *
         curr = curr->next;
     }
 
-    if (!empty(new_list))
+    if (!dll_empty(new_list))
         return ST_FAIL_NOT_EMPTY;
 
     for (int x = begin_idx; x < end_idx; ++x) {
-        append(new_list, curr->data);
+        dll_append(new_list, curr->data);
         curr = curr->next;
     }
 
@@ -149,10 +149,10 @@ RET_STATUS dll_insert(DLINKEDLIST *dll, int index, int item) {
         return ST_FAIL_EMPTY;
 
     if (index >= dll->size) {
-        append(dll, item);
+        dll_append(dll, item);
     }
     else if (index <= 0) {
-        push(dll, item);
+        dll_push(dll, item);
     }
     else {
         NODE *temp = malloc(sizeof(NODE));
