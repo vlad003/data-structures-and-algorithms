@@ -1,5 +1,5 @@
 enum RET_STATUSES {
-    ST_OK,          // complete success!
+    ST_OK = 0,          // complete success!
     ST_FAIL,        // general failure
     ST_FAIL_EMPTY,
     ST_FAIL_NOT_EMPTY,
