@@ -3,6 +3,9 @@
 #include "dlinkedlist.h"
 
 RET_STATUS dll_append(DLINKEDLIST *dll, int data) {
+    if (dll == NULL)
+        return ST_FAIL_EMPTY;
+
     NODE *temp = malloc(sizeof(NODE));
     if (temp == NULL)
         return ST_FAIL_MALLOC;
@@ -27,6 +30,9 @@ RET_STATUS dll_append(DLINKEDLIST *dll, int data) {
 }
 
 RET_STATUS dll_push(DLINKEDLIST *dll, int data) {
+    if (dll == NULL)
+        return ST_FAIL_EMPTY;
+
     NODE *temp = malloc(sizeof(NODE));
     if (temp == NULL)
         return ST_FAIL_MALLOC;
@@ -137,7 +143,7 @@ RET_STATUS dll_range(DLINKEDLIST *dll, int begin_idx, int end_idx, DLINKEDLIST *
 }
 
 RET_STATUS dll_insert(DLINKEDLIST *dll, int index, int item) {
-    if (dll == NULL || dll->begin == NULL)
+    if (dll == NULL)
         return ST_FAIL_EMPTY;
 
     if (index >= dll->size) {
