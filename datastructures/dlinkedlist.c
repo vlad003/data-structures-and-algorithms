@@ -2,7 +2,7 @@
 #include <stdbool.h>
 #include "dlinkedlist.h"
 
-RET_STATUS append(DLINKEDLIST *dll, int data) {
+RET_STATUS dll_append(DLINKEDLIST *dll, int data) {
     NODE *temp = malloc(sizeof(NODE));
     if (temp == NULL)
         return ST_FAIL_MALLOC;
@@ -26,7 +26,7 @@ RET_STATUS append(DLINKEDLIST *dll, int data) {
     return ST_OK;
 }
 
-RET_STATUS push(DLINKEDLIST *dll, int data) {
+RET_STATUS dll_push(DLINKEDLIST *dll, int data) {
     NODE *temp = malloc(sizeof(NODE));
     if (temp == NULL)
         return ST_FAIL_MALLOC;
@@ -48,7 +48,7 @@ RET_STATUS push(DLINKEDLIST *dll, int data) {
     return ST_OK;
 }
 
-RET_STATUS pop(DLINKEDLIST *dll, int *ret_value) {
+RET_STATUS dll_pop(DLINKEDLIST *dll, int *ret_value) {
     if (dll->begin != NULL) {
         NODE *temp = dll->begin;
         dll->begin = (dll->begin)->next;
@@ -66,20 +66,20 @@ RET_STATUS pop(DLINKEDLIST *dll, int *ret_value) {
     return ST_FAIL_EMPTY;
 }
 
-bool empty(DLINKEDLIST *dll) {
+bool dll_empty(DLINKEDLIST *dll) {
     if (dll->size <= 0) 
         return true;
     return false;
 }
 
-RET_STATUS front(DLINKEDLIST *dll, int *ret_value) {
+RET_STATUS dll_front(DLINKEDLIST *dll, int *ret_value) {
     if (dll == NULL || dll->begin == NULL)
         return ST_FAIL_EMPTY;
     *ret_value = (dll->begin)->data;
     return ST_OK;
 }
 
-RET_STATUS item_at(DLINKEDLIST *dll, int index, int *ret_value) {
+RET_STATUS dll_item_at(DLINKEDLIST *dll, int index, int *ret_value) {
     if (dll == NULL || dll->begin == NULL)
         return ST_FAIL_EMPTY;
     NODE *curr = dll->begin;
@@ -91,7 +91,7 @@ RET_STATUS item_at(DLINKEDLIST *dll, int index, int *ret_value) {
     return ST_OK;
 }
 
-RET_STATUS remove_at(DLINKEDLIST *dll, int index) {
+RET_STATUS dll_remove_at(DLINKEDLIST *dll, int index) {
     if (dll == NULL || dll->begin == NULL)
         return ST_FAIL_EMPTY;
     NODE *curr = dll->begin;  
@@ -116,7 +116,7 @@ RET_STATUS remove_at(DLINKEDLIST *dll, int index) {
     return ST_OK;
 }
 
-RET_STATUS range(DLINKEDLIST *dll, int begin_idx, int end_idx, DLINKEDLIST *new_list) {
+RET_STATUS dll_range(DLINKEDLIST *dll, int begin_idx, int end_idx, DLINKEDLIST *new_list) {
     if (dll == NULL || dll->begin == NULL)
         return ST_FAIL_EMPTY;
     NODE *curr = dll->begin;
@@ -136,7 +136,7 @@ RET_STATUS range(DLINKEDLIST *dll, int begin_idx, int end_idx, DLINKEDLIST *new_
     return ST_OK;
 }
 
-RET_STATUS insert(DLINKEDLIST *dll, int index, int item) {
+RET_STATUS dll_insert(DLINKEDLIST *dll, int index, int item) {
     if (dll == NULL || dll->begin == NULL)
         return ST_FAIL_EMPTY;
 
