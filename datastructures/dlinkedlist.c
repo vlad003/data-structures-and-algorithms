@@ -72,10 +72,12 @@ RET_STATUS dll_pop(DLINKEDLIST *dll, int *ret_value) {
     return ST_FAIL_EMPTY;
 }
 
-bool dll_empty(DLINKEDLIST *dll) {
+RET_STATUS dll_empty(DLINKEDLIST *dll) {
+    if (dll == NULL)
+        return ST_FAIL_EMPTY;
     if (dll->size <= 0) 
-        return true;
-    return false;
+        return ST_OK;
+    return ST_FAIL_EMPTY;
 }
 
 RET_STATUS dll_front(DLINKEDLIST *dll, int *ret_value) {
