@@ -1,17 +1,17 @@
 #include "errors.h"
 
-enum { max_heap, min_heap } heap_type;
+enum heap_type { max_heap, min_heap };
 
 struct bt_node {
     int data;
-    struct node *parent, *left, *right;
+    struct bt_node *parent, *left, *right;
 };
 
 struct heap {
     int size;
-    heap_type type;
-    struct node *root;
-    struct node *extremity; // represents either the smallest or largest node
+    enum heap_type type;
+    struct bt_node *root;
+    struct bt_node *extremity; // represents either the smallest or largest node
 };
 
 typedef struct bt_node BT_NODE;

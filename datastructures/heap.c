@@ -19,13 +19,17 @@ RET_STATUS hp_insert(HEAP *hp, int data) {
     bool done = false;
 
     if (hp->root == NULL) {
+        BT_NODE *temp = malloc(sizeof(BT_NODE));
+        if (temp == NULL)
+            return ST_FAIL_MALLOC;
         hp->root = temp;
         hp->extremity = temp;
         done = true;
+
+        return ST_OK;
     }
 
-    if (!done)
-        BT_NODE *current = hp->root;
+    BT_NODE *current = hp->root;
 
     while (!done) {
         // if it's a min_heap, we trickle the node down if it's less than current value
@@ -38,7 +42,8 @@ RET_STATUS hp_insert(HEAP *hp, int data) {
                 current = current->left != NULL ? current->left : current->right;
             else if (current->left == NULL && current->right == NULL) {
                 // reached a leaf
-                if ((BT_NODE *temp = malloc(sizeof(BT_NODE))) == NULL)
+                BT_NODE *temp = malloc(sizeof(BT_NODE));
+                if (temp == NULL)
                     return ST_FAIL_MALLOC;
 
                 temp->data = data;
