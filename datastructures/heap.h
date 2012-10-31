@@ -1,6 +1,10 @@
 #include "errors.h"
 
-enum heap_type { max_heap, min_heap };
+enum heap_type {
+    max_heap = -1,
+    min_heap = 1
+};
+
 
 struct bt_node {
     int data;
