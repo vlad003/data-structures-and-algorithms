@@ -90,6 +90,8 @@ RET_STATUS hp_insert(HEAP *hp, int data) {
             if (hp->extremity == NULL)
                 hp->extremity = temp;
             else {
+                if 
+
                 int ext_data = (hp->extremity)->data;
                 if (hp->type * ext_data <= hp->type * data)
                     hp->extremity = temp;
@@ -162,6 +164,7 @@ RET_STATUS hp_extract(HEAP *hp, int *ret_value) {
     // trickle down the rest
 
     bool done = false;
+    bool extremity_set = false;
 
     BT_NODE *current = hp->root;
 
@@ -169,19 +172,37 @@ RET_STATUS hp_extract(HEAP *hp, int *ret_value) {
     // if current->data < data, move into smaller child and repeat
     // if current->data >= data, stick data into current->data and be done
     // no need to add new nodes in this case.
+    //
+    //
+    (hp->root)->data = data;
     while (!done) {
         // if it's a min_heap, we trickle the node down if it's less than current value
 
         if ((current->left == NULL) != (current->right == NULL)) {
             // one of the branches is null
-            current = current->left != NULL ? current->left : current->right;
-            // move the current data into the parent
-            (current->parent)->data = current->data;
-            // once we bring the value up, we put the extremity into the child
-            current->data = data;
+            // so we stick the extremity in that branch.
+            // We could start moving stuff around, but why would we?
+            
+            // The NULL branch will always be the right one.
+            BT_NODE *temp = malloc(sizeof(BT_NODE));
+            if (temp == NULL)
+                return ST_FAIL_MALLOC;
 
-            hp->extremity = current;
-            break;
+            temp->data = data;
+            temp->parent = current;
+            temp->left = NULL;
+            temp->right = NULL;
+
+            current->right = temp;
+
+            hp->extremity = temp;
+            extremity_set = true;
+
+            // if null was there, then that means that that's were the extremity
+            // was removed from. So the other side has a blank node that we need to bring other
+            // values up into
+
+            current = (current->parent)->left;
         }
         else if (current->left == NULL && current->right == NULL) {
             // we've reached the last node on a path
