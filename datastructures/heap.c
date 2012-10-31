@@ -34,7 +34,6 @@ RET_STATUS hp_insert(HEAP *hp, int data) {
     temp->right = NULL;
 
     if (hp->root == NULL) {
-        puts("\nroot is null");
         hp->root = temp;
         hp->extremity = temp;
         done = true;
@@ -43,13 +42,10 @@ RET_STATUS hp_insert(HEAP *hp, int data) {
         return ST_OK;
     }
     else if (hp->extremity == hp->root) {
-        puts("extremity is root");
         temp->parent = hp->root;
         (hp->root)->left = temp;
-        puts("gots here");
     }
     else if (hp->size < 4) {
-        puts("hp->size < 4");
         // this is the case we can't do the stuff with ext->parent->parent
         // because there isn't two levels of parents
         switch (hp->size) {
@@ -66,16 +62,13 @@ RET_STATUS hp_insert(HEAP *hp, int data) {
         }
     }
     else {
-        puts("\nroot is not null");
         // stick the node where the next one should sit at the bottom
         if (((hp->extremity)->parent)->left == hp->extremity) {
-        puts("current is the left child of its parent");
             // current is the left child of its parent
             temp->parent = (hp->extremity)->parent;
             ((hp->extremity)->parent)->right = temp;
         }
         else if ((((hp->extremity)->parent)->parent)->right == (hp->extremity)->parent) {
-        puts("extremity is the rightmost node of a full row");
             // extremity is the rightmost node on a full row,
             // so we need to move to the next row.
             BT_NODE *current = hp->root;
@@ -86,11 +79,9 @@ RET_STATUS hp_insert(HEAP *hp, int data) {
             current->left = temp;
         }
         else {
-        puts("extremity is the right child of parent");
             // extremity is the right child of parent, but there's still space on the row
             temp->parent = (((hp->extremity)->parent)->parent)->right;
             ((((hp->extremity)->parent)->parent)->right)->left = temp;
-            puts("got here");
         }
     }
 
@@ -102,7 +93,6 @@ RET_STATUS hp_insert(HEAP *hp, int data) {
     BT_NODE *current = hp->extremity;
 
     while (current->parent != NULL && (hp->type * current->data < hp->type * (current->parent)->data)) {
-        puts("heress");
         // while the value of current < value of parent, swap them (for min_type)
         swap(&(current->data), &((current->parent)->data));
 
@@ -130,6 +120,23 @@ RET_STATUS hp_extract(HEAP *hp, int *ret_value) {
         hp->extremity = NULL;
         hp->size = 0;
         return ST_OK; // We don't want to try to go down another level
+    }
+    else if (hp->size < 4) {
+        // in the else, we use ext->parent->parent, which we can't do
+        // if size < 4
+        BT_NODE *old_ext = hp->extremity;
+
+        switch (hp->size) {
+            case 2:
+                hp->extremity = hp->root;
+                break;
+            case 3:
+                hp->extremity = ((old_ext)->parent)->left;
+                break;
+            default:
+                break;
+        }
+        free(old_ext);
     }
     else {
         if (hp->extremity == NULL)
@@ -167,8 +174,7 @@ RET_STATUS hp_extract(HEAP *hp, int *ret_value) {
             // should never get here
             return ST_FAIL;
 
-        free(hp->extremity);
-        hp->size--;
+        free(old_ext);
     }
 
     // trickle down the rest
@@ -193,5 +199,6 @@ RET_STATUS hp_extract(HEAP *hp, int *ret_value) {
             break;
         }
     }
+    hp->size--;
     return ST_OK;
 }
