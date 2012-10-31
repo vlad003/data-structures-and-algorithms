@@ -1,6 +1,5 @@
 #include <stdbool.h>
 #include <stdlib.h>
-#include <stdio.h>
 #include "heap.h"
 
 void swap(int *x, int *y) {
@@ -23,8 +22,6 @@ RET_STATUS hp_insert(HEAP *hp, int data) {
 
     // trickle down
 
-    bool done = false;
-
     BT_NODE *temp = malloc(sizeof(BT_NODE));
     if (temp == NULL)
         return ST_FAIL_MALLOC;
@@ -36,7 +33,6 @@ RET_STATUS hp_insert(HEAP *hp, int data) {
     if (hp->root == NULL) {
         hp->root = temp;
         hp->extremity = temp;
-        done = true;
 
         hp->size++;
         return ST_OK;
@@ -103,8 +99,9 @@ RET_STATUS hp_insert(HEAP *hp, int data) {
 }
 
 RET_STATUS hp_extract(HEAP *hp, int *ret_value) {
-    if (hp == NULL || hp->root == NULL)
+    if (hp == NULL || hp->root == NULL){
         return ST_FAIL_EMPTY;
+    }
 
     *ret_value = (hp->root)->data;
 
@@ -131,7 +128,7 @@ RET_STATUS hp_extract(HEAP *hp, int *ret_value) {
                 hp->extremity = hp->root;
                 break;
             case 3:
-                hp->extremity = ((old_ext)->parent)->left;
+                hp->extremity = (hp->root)->left;
                 break;
             default:
                 break;
@@ -139,15 +136,20 @@ RET_STATUS hp_extract(HEAP *hp, int *ret_value) {
         free(old_ext);
     }
     else {
-        if (hp->extremity == NULL)
+        if (hp->extremity == NULL) {
             return ST_FAIL;
+        }
         
         // update the hp->extremity pointer before deleting it
         BT_NODE *old_ext = hp->extremity;
 
         if (((old_ext->parent)->parent)->right == (old_ext->parent)) {
-            // extremity is the rightmost node of a full row
-            hp->extremity = (old_ext->parent)->left;
+            // extremity is the rightmost node of a full row OR
+            // it's the left child of a node.
+            if ((old_ext->parent)->left == old_ext)
+                hp->extremity = (((old_ext->parent)->parent)->left)->right;
+            else
+                hp->extremity = (old_ext->parent)->left;
         }
         else if ((old_ext->parent)->right == NULL) {
             // extremity is the only node on a row and it's the leftmost one
@@ -162,7 +164,6 @@ RET_STATUS hp_extract(HEAP *hp, int *ret_value) {
             hp->extremity = (old_ext->parent)->left;
         }
 
-        // delete the old extremity node
         BT_NODE *p = (old_ext)->parent;
         // set the left/right pointers to NULL when removing
         // the extremity.
@@ -170,9 +171,10 @@ RET_STATUS hp_extract(HEAP *hp, int *ret_value) {
             p->left = NULL;
         else if (p->right == old_ext)
             p->right = NULL;
-        else
+        else {
             // should never get here
             return ST_FAIL;
+        }
 
         free(old_ext);
     }
