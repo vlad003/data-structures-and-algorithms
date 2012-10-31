@@ -3,6 +3,12 @@
 #include <stdio.h>
 #include "heap.h"
 
+void swap(int *x, int *y) {
+    *x ^= *y;
+    *y ^= *x;
+    *x ^= *y;
+}
+
 RET_STATUS hp_empty(HEAP *hp) {
     if (hp == NULL)
         return ST_FAIL_EMPTY;
@@ -19,13 +25,16 @@ RET_STATUS hp_insert(HEAP *hp, int data) {
 
     bool done = false;
 
+    BT_NODE *temp = malloc(sizeof(BT_NODE));
+    if (temp == NULL)
+        return ST_FAIL_MALLOC;
+    temp->data = data;
+    temp->parent = NULL;
+    temp->left = NULL;
+    temp->right = NULL;
+
     if (hp->root == NULL) {
-        BT_NODE *temp = malloc(sizeof(BT_NODE));
-        if (temp == NULL)
-            return ST_FAIL_MALLOC;
-        temp->data = data;
-        temp->left = NULL;
-        temp->right = NULL;
+        puts("\nroot is null");
         hp->root = temp;
         hp->extremity = temp;
         done = true;
@@ -33,75 +42,71 @@ RET_STATUS hp_insert(HEAP *hp, int data) {
         hp->size++;
         return ST_OK;
     }
-
-    BT_NODE *current = hp->root;
-
-    while (!done) {
-        // if it's a min_heap, we trickle the node down if it's less than current value
-        if (hp->type * current->data >= hp->type * data) {
-            current->data ^= data;
-            data ^= current->data;
-            current->data ^= data;
-        }
-        if ((current->left == NULL) != (current->right == NULL)) {
-            // one of the branches is null
-            current = current->left != NULL ? current->left : current->right;
-            if (hp->type * current->data >= hp->type * data) {
-                continue;
-            }
-            else {
-                // if we don't need to go down another level, we need to
-                // put the value on the NULL branch
-
-                BT_NODE *temp = malloc(sizeof(BT_NODE));
-                if (temp == NULL)
-                    return ST_FAIL_MALLOC;
-
-                temp->data = data;
-                temp->parent = current->parent;
-                temp->left = NULL;
-                temp->right = NULL;
-
-                (current->parent)->right = temp; // it will ALWAYS be the right one;
-                if (hp->extremity == NULL)
-                    hp->extremity = temp;
-                else {
-                    int ext_data = (hp->extremity)->data;
-                    if (hp->type * ext_data <= hp->type * data)
-                        hp->extremity = temp;
-                }
+    else if (hp->extremity == hp->root) {
+        puts("extremity is root");
+        temp->parent = hp->root;
+        (hp->root)->left = temp;
+        puts("gots here");
+    }
+    else if (hp->size < 4) {
+        puts("hp->size < 4");
+        // this is the case we can't do the stuff with ext->parent->parent
+        // because there isn't two levels of parents
+        switch (hp->size) {
+            case 2:
+                temp->parent = hp->root;
+                (hp->root)->right = temp;
                 break;
-            }
-
+            case 3:
+                temp->parent = (hp->root)->left;
+                ((hp->root)->left)->left = temp;
+                break;
+            default:
+                return ST_FAIL;
         }
-        else if (current->left == NULL && current->right == NULL) {
-            // reached a leaf
-            BT_NODE *temp = malloc(sizeof(BT_NODE));
-            if (temp == NULL)
-                return ST_FAIL_MALLOC;
+    }
+    else {
+        puts("\nroot is not null");
+        // stick the node where the next one should sit at the bottom
+        if (((hp->extremity)->parent)->left == hp->extremity) {
+        puts("current is the left child of its parent");
+            // current is the left child of its parent
+            temp->parent = (hp->extremity)->parent;
+            ((hp->extremity)->parent)->right = temp;
+        }
+        else if ((((hp->extremity)->parent)->parent)->right == (hp->extremity)->parent) {
+        puts("extremity is the rightmost node of a full row");
+            // extremity is the rightmost node on a full row,
+            // so we need to move to the next row.
+            BT_NODE *current = hp->root;
+            while (current->left != NULL)
+                current = current->left;
 
-            temp->data = data;
             temp->parent = current;
-            temp->left = NULL;
-            temp->right = NULL;
-
-            current->left = temp; // it must ALWAYS be the left one;
-
-            if (hp->extremity == NULL)
-                hp->extremity = temp;
-            else {
-                if 
-
-                int ext_data = (hp->extremity)->data;
-                if (hp->type * ext_data <= hp->type * data)
-                    hp->extremity = temp;
-            }
-
-            break;
+            current->left = temp;
         }
-        else { 
-            current = (current->left)->data < (current->right)->data ? current->left : current->right;
+        else {
+        puts("extremity is the right child of parent");
+            // extremity is the right child of parent, but there's still space on the row
+            temp->parent = (((hp->extremity)->parent)->parent)->right;
+            ((((hp->extremity)->parent)->parent)->right)->left = temp;
+            puts("got here");
         }
+    }
+
+    // new node is the new extremity.
+    // we didn't update till now so we could use the old value above
+    hp->extremity = temp;
+
+    // trickle the value up
+    BT_NODE *current = hp->extremity;
+
+    while (current->parent != NULL && (hp->type * current->data < hp->type * (current->parent)->data)) {
+        puts("heress");
+        // while the value of current < value of parent, swap them (for min_type)
+        swap(&(current->data), &((current->parent)->data));
+
+        current = current->parent;
     }
     hp->size++;
     return ST_OK;
@@ -111,21 +116,15 @@ RET_STATUS hp_extract(HEAP *hp, int *ret_value) {
     if (hp == NULL || hp->root == NULL)
         return ST_FAIL_EMPTY;
 
-    printf("root at top = %d\n", hp->root);
     *ret_value = (hp->root)->data;
-    printf("ret_value = %d\n", *ret_value);
 
     // Get the extremity and delete it
     int data = (hp->extremity)->data;
-    printf("extremity data = %d\n", data);
-
 
     // Get rid of the node at the extremity
-
     if (hp->extremity == hp->root) {
         // extremity is the same as the root
         // so we need to clear the heap
-        puts("\n extremity is root");
         free(hp->root);
         hp->root = NULL;
         hp->extremity = NULL;
@@ -133,90 +132,65 @@ RET_STATUS hp_extract(HEAP *hp, int *ret_value) {
         return ST_OK; // We don't want to try to go down another level
     }
     else {
-        puts("\n hp->size != 1");
         if (hp->extremity == NULL)
             return ST_FAIL;
-        BT_NODE *p = (hp->extremity)->parent;
-        printf("\n &extremity parent = %d\t%d\n", p, p->data);
         
-        if (p->left == hp->extremity)
+        // update the hp->extremity pointer before deleting it
+        BT_NODE *old_ext = hp->extremity;
+
+        if (((old_ext->parent)->parent)->right == (old_ext->parent)) {
+            // extremity is the rightmost node of a full row
+            hp->extremity = (old_ext->parent)->left;
+        }
+        else if ((old_ext->parent)->right == NULL) {
+            // extremity is the only node on a row and it's the leftmost one
+            BT_NODE *current = hp->root;
+            while (current->right != NULL)
+                current = current->right;
+
+            hp->extremity = current;
+        }
+        else {
+            // extremity is the right child of a node somewhere else
+            hp->extremity = (old_ext->parent)->left;
+        }
+
+        // delete the old extremity node
+        BT_NODE *p = (old_ext)->parent;
+        // set the left/right pointers to NULL when removing
+        // the extremity.
+        if (p->left == old_ext)
             p->left = NULL;
-        else if (p->right == hp->extremity)
+        else if (p->right == old_ext)
             p->right = NULL;
         else
             // should never get here
-            puts("\nWHAT'RE WE DOING HERE?");
-
-        printf("left child = %d", p->left);
-        if (p->left != NULL)
-            printf("\t%d", (p->left)->data);
-        printf("\n");
-        printf("right child = %d", p->right);
-        if (p->right != NULL)
-            printf("\t%d", (p->right)->data);
-        printf("\n");
+            return ST_FAIL;
 
         free(hp->extremity);
-        hp->extremity = NULL;
         hp->size--;
     }
 
     // trickle down the rest
 
-    bool done = false;
-    bool extremity_set = false;
-
     BT_NODE *current = hp->root;
-
-    // move the smaller child into the parent and move to the smaller child
-    // if current->data < data, move into smaller child and repeat
-    // if current->data >= data, stick data into current->data and be done
-    // no need to add new nodes in this case.
-    //
-    //
     (hp->root)->data = data;
-    while (!done) {
-        // if it's a min_heap, we trickle the node down if it's less than current value
 
-        if ((current->left == NULL) != (current->right == NULL)) {
-            // one of the branches is null
-            // so we stick the extremity in that branch.
-            // We could start moving stuff around, but why would we?
-            
-            // The NULL branch will always be the right one.
-            BT_NODE *temp = malloc(sizeof(BT_NODE));
-            if (temp == NULL)
-                return ST_FAIL_MALLOC;
-
-            temp->data = data;
-            temp->parent = current;
-            temp->left = NULL;
-            temp->right = NULL;
-
-            current->right = temp;
-
-            hp->extremity = temp;
-            extremity_set = true;
-
-            // if null was there, then that means that that's were the extremity
-            // was removed from. So the other side has a blank node that we need to bring other
-            // values up into
-
-            current = (current->parent)->left;
-        }
-        else if (current->left == NULL && current->right == NULL) {
-            // we've reached the last node on a path
-            // meaning we already dragged its data up, and need to
-            // put the extremity here;
-            (current->parent)->data = current->data;
-            current->data = data;
-            hp->extremity = current;
+    while (current->left != NULL && current->right != NULL) {
+        // while haven't reached a leaf
+        if (current->right == NULL && (hp->type * (current->left)->data < hp->type * current->data)) {
+            swap(&(current->data), &((current->left)->data));
             break;
         }
-        else { 
-            // we're at an inner node
-            current = hp->type * (current->left)->data <= hp->type * (current->right)->data ? current->left : current->right;
-            /*(current->parent)->data = current->data;*/
+        else {
+            BT_NODE *new_curr = hp->type * (current->left)->data < hp->type * (current->right)->data ? current->left : current->right;
+
+            if (hp->type * current->data > hp->type * new_curr->data) {
+                swap(&(current->data), &(new_curr->data));
+                current = new_curr;
+                continue;
+            }
+            break;
         }
     }
     return ST_OK;
