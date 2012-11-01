@@ -52,6 +52,16 @@ RET_STATUS ahp_extract(array_heap *hp, int *ret_value) {
     if (hp == NULL || hp->heap == NULL)
         return ST_FAIL_EMPTY;
 
+    if (hp->size / hp->capacity <= 0.25 && hp->capacity >= 32) {
+        // only a quarter of the array is actually used
+        // we don't want to shrink past the minimum capacity of 16
+        int *new = realloc(hp->heap, sizeof(int) * hp->capacity / 2);
+        if (new == NULL)
+            return ST_FAIL_MALLOC;
+        hp->capacity /= 2;
+        hp->heap = new;
+    }
+
     // give the value back before doing the trickle down so that
     // we still give back a valid value even if stuff starts going
     // wrong below
