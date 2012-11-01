@@ -8,6 +8,17 @@ void swap(int *x, int *y) {
     *x ^= *y;
 }
 
+HEAP *hp_create(heap_type ht) {
+    HEAP *heap = malloc(sizeof(HEAP));
+    if (heap != NULL) {
+        heap->root = NULL;
+        heap->extremity = NULL;
+        heap->type = ht;
+        heap->size = 0;
+    }
+    return heap;
+}
+
 RET_STATUS hp_empty(HEAP *hp) {
     if (hp == NULL)
         return ST_FAIL_EMPTY;
