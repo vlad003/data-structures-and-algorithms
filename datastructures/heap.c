@@ -204,3 +204,35 @@ RET_STATUS hp_extract(HEAP *hp, int *ret_value) {
     hp->size--;
     return ST_OK;
 }
+
+void del_children(BT_NODE *node) {
+    if (node == NULL)
+        return;
+    else if (node->left == NULL) {
+        free(node);
+        return;
+    }
+    else if (node->right == NULL) {
+        del_children(node->left);
+        free(node);
+        return;
+    }
+    else {
+        del_children(node->left);
+        del_children(node->right);
+        free(node);
+        return;
+    }
+    return;
+}
+
+
+RET_STATUS hp_clear(HEAP *hp) {
+    if (hp == NULL)
+        return ST_OK;
+    del_children(hp->root);
+    hp->root = NULL;
+    hp->extremity = NULL;
+    hp->size = 0;
+    return ST_OK;
+}

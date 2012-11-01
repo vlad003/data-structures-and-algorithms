@@ -24,3 +24,4 @@ typedef struct heap HEAP;
 RET_STATUS hp_insert(HEAP *hp, int data);
 RET_STATUS hp_extract(HEAP *hp, int *ret_value);
 RET_STATUS hp_empty(HEAP *hp);
+RET_STATUS hp_clear(HEAP *hp);
