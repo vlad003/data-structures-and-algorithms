@@ -20,6 +20,7 @@ struct heap {
 
 typedef struct bt_node BT_NODE;
 typedef struct heap HEAP;
+typedef enum heap_type heap_type;
 
 HEAP *hp_create(heap_type ht);
 RET_STATUS hp_insert(HEAP *hp, int data);
