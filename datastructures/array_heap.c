@@ -61,7 +61,7 @@ RET_STATUS ahp_extract(array_heap *hp, int *ret_value) {
     int data = hp->heap[hp->size-1];
     hp->size--; // decrease the size to signify removing the extremity
 
-    //TODO: trickle down
+    // trickle down
     hp->heap[0] = data;
     
     int current = 0;
