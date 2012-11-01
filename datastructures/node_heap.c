@@ -31,8 +31,6 @@ RET_STATUS hp_insert(HEAP *hp, int data) {
     if (hp == NULL)
         return ST_FAIL_EMPTY;
 
-    // trickle down
-
     BT_NODE *temp = malloc(sizeof(BT_NODE));
     if (temp == NULL)
         return ST_FAIL_MALLOC;
@@ -99,6 +97,7 @@ RET_STATUS hp_insert(HEAP *hp, int data) {
     // trickle the value up
     BT_NODE *current = hp->extremity;
 
+    // trickle up
     while (current->parent != NULL && (hp->type * current->data < hp->type * (current->parent)->data)) {
         // while the value of current < value of parent, swap them (for min_type)
         swap(&(current->data), &((current->parent)->data));
