@@ -7,7 +7,7 @@ void swap(int *x, int *y) {
     *x ^= *y;
 }
 
-array_heap *ahp_create(heap_type ht) {
+array_heap *ahp_construct(heap_type ht) {
     array_heap *hp = malloc(sizeof(array_heap));
     if (hp != NULL) {
         hp->heap = malloc(sizeof(int) * 16);
@@ -109,10 +109,11 @@ RET_STATUS ahp_empty(array_heap *hp) {
     return ST_OK;
 }
 
-RET_STATUS ahp_clear(array_heap *hp) {
+RET_STATUS ahp_destruct(array_heap *hp) {
     if (hp == NULL)
         return ST_OK;
     free(hp->heap);
     free(hp);
+    hp = NULL;
     return ST_OK;
 }

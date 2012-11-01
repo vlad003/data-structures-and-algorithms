@@ -22,8 +22,8 @@ typedef struct bt_node BT_NODE;
 typedef struct heap HEAP;
 typedef enum heap_type heap_type;
 
-HEAP *hp_create(heap_type ht);
+HEAP *hp_construct(heap_type ht);
 RET_STATUS hp_insert(HEAP *hp, int data);
 RET_STATUS hp_extract(HEAP *hp, int *ret_value);
 RET_STATUS hp_empty(HEAP *hp);
-RET_STATUS hp_clear(HEAP *hp);
+RET_STATUS hp_destruct(HEAP *hp);
