@@ -1,11 +1,22 @@
 #include <stdbool.h>
 #include <stdlib.h>
-#include "heap.h"
+#include "node_heap.h"
 
 void swap(int *x, int *y) {
     *x ^= *y;
     *y ^= *x;
     *x ^= *y;
+}
+
+HEAP *hp_create(heap_type ht) {
+    HEAP *heap = malloc(sizeof(HEAP));
+    if (heap != NULL) {
+        heap->root = NULL;
+        heap->extremity = NULL;
+        heap->type = ht;
+        heap->size = 0;
+    }
+    return heap;
 }
 
 RET_STATUS hp_empty(HEAP *hp) {
@@ -19,8 +30,6 @@ RET_STATUS hp_empty(HEAP *hp) {
 RET_STATUS hp_insert(HEAP *hp, int data) {
     if (hp == NULL)
         return ST_FAIL_EMPTY;
-
-    // trickle down
 
     BT_NODE *temp = malloc(sizeof(BT_NODE));
     if (temp == NULL)
@@ -88,6 +97,7 @@ RET_STATUS hp_insert(HEAP *hp, int data) {
     // trickle the value up
     BT_NODE *current = hp->extremity;
 
+    // trickle up
     while (current->parent != NULL && (hp->type * current->data < hp->type * (current->parent)->data)) {
         // while the value of current < value of parent, swap them (for min_type)
         swap(&(current->data), &((current->parent)->data));
@@ -202,5 +212,36 @@ RET_STATUS hp_extract(HEAP *hp, int *ret_value) {
         }
     }
     hp->size--;
+    return ST_OK;
+}
+
+void del_children(BT_NODE *node) {
+    if (node == NULL)
+        return;
+    else if (node->left == NULL) {
+        free(node);
+        return;
+    }
+    else if (node->right == NULL) {
+        del_children(node->left);
+        free(node);
+        return;
+    }
+    else {
+        del_children(node->left);
+        del_children(node->right);
+        free(node);
+        return;
+    }
+    return;
+}
+
+RET_STATUS hp_clear(HEAP *hp) {
+    if (hp == NULL)
+        return ST_OK;
+    del_children(hp->root);
+    hp->root = NULL;
+    hp->extremity = NULL;
+    hp->size = 0;
     return ST_OK;
 }
