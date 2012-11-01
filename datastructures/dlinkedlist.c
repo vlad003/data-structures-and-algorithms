@@ -2,6 +2,16 @@
 #include <stdbool.h>
 #include "dlinkedlist.h"
 
+DLINKEDLIST *dll_construct() {
+    DLINKEDLIST *dll = malloc(sizeof(DLINKEDLIST));
+    if (dll != NULL) {
+        dll->size = 0;
+        dll->begin = 0;
+        dll->end = 0;
+    }
+    return dll;
+}
+
 RET_STATUS dll_append(DLINKEDLIST *dll, int data) {
     if (dll == NULL)
         return ST_FAIL_EMPTY;
@@ -176,3 +186,21 @@ RET_STATUS dll_insert(DLINKEDLIST *dll, int index, int item) {
     return ST_OK;
 
 }
+
+RET_STATUS dll_destruct(DLINKEDLIST *dll) {
+    if (dll == NULL)
+        return ST_OK;
+    
+    NODE *curr = dll->begin, *new_curr;
+    while (curr != NULL) {
+        new_curr = curr->next;
+        free(curr);
+        curr = new_curr;
+    }
+
+    free(dll);
+    dll = NULL;
+    
+    return ST_OK;
+}
+

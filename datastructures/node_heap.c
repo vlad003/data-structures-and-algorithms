@@ -8,7 +8,7 @@ void swap(int *x, int *y) {
     *x ^= *y;
 }
 
-HEAP *hp_create(heap_type ht) {
+HEAP *hp_construct(heap_type ht) {
     HEAP *heap = malloc(sizeof(HEAP));
     if (heap != NULL) {
         heap->root = NULL;
@@ -236,12 +236,11 @@ void del_children(BT_NODE *node) {
     return;
 }
 
-RET_STATUS hp_clear(HEAP *hp) {
+RET_STATUS hp_destruct(HEAP *hp) {
     if (hp == NULL)
         return ST_OK;
     del_children(hp->root);
-    hp->root = NULL;
-    hp->extremity = NULL;
-    hp->size = 0;
+    free(hp);
+    hp = NULL;
     return ST_OK;
 }
