@@ -106,6 +106,3 @@ RET_STATUS ahp_clear(array_heap *hp) {
     free(hp);
     return ST_OK;
 }
-
-
-
