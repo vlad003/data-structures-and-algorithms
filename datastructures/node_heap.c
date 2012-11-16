@@ -203,7 +203,7 @@ RET_STATUS hp_extract(HEAP *hp, int *ret_value) {
     BT_NODE *current = hp->root;
     (hp->root)->data = data;
 
-    while (current->left != NULL && current->right != NULL) {
+    while (current->left != NULL) {
         // while haven't reached a leaf
         if (current->right == NULL && (hp->type * (current->left)->data < hp->type * current->data)) {
             swap(&(current->data), &((current->left)->data));

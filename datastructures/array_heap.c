@@ -87,7 +87,7 @@ RET_STATUS ahp_extract(array_heap *hp, int *ret_value) {
     int left_child = (current * 2) + 1;
     int right_child = (current * 2) + 2;
 
-    while (left_child < hp->size && right_child < hp->size) {
+    while (left_child < hp->size) {
         // while haven't reached a leaf
         if (right_child >= hp->size && (hp->type * hp->heap[left_child] < hp->type * hp->heap[current])) {
             swap(&(hp->heap[current]), &(hp->heap[left_child]));
