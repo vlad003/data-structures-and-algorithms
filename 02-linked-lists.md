@@ -148,5 +148,5 @@ can be improved to O(1) by keeping track of the end node in the `list` struct.
 
 Prepending to a list is O(1) since you only have to switch two pointers.
 
-Insertion and deletion is O(n) since you have to traverse the list to the
+Insertion and deletion are both O(n) since you have to traverse the list to the
 necessary position. Switching the pointers is O(1).
