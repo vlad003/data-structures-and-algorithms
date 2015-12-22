@@ -1,4 +1,9 @@
-Data-Structures-and-Algorithms
-==============================
+# Data Structures and Algorithms
 
-As I learn about new data structures and algorithms for school, I implement them in C
+This repository contains an overview of a number of common data structures and
+algorithms.
+
+# License
+
+Unless otherwise mentioned, this files within this repository are licensed
+under the Creative Commons BY-SA 4.0 license.
