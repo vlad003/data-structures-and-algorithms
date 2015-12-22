@@ -48,15 +48,15 @@ to point to it.
 
 ```c
 struct node *x = malloc(sizeof(struct node));
-x->data = 5;    # this is where we store our integer in the node
-x->next = NULL; # the last element of the list doesn't have anything after it
+x->data = 5;    // this is where we store our integer in the node
+x->next = NULL; // the last element of the list doesn't have anything after it
 
-# if the list is empty, we put the node at the beginning
+// if the list is empty, we put the node at the beginning
 if (L->begin == NULL) {
     L->begin = x;
     L->size++;
 } else {
-    # find the last node
+    // find the last node
     struct node *last = L->begin;
     while (last->next != NULL) {
         last = last->next;
@@ -90,7 +90,7 @@ insert it in position 6. Assuming the list has more than 6 elements, this is
 what you need to do:
 
 ```c
-struct node *prev = L->begin;  # this is going to be the node in position 5
+struct node *prev = L->begin;  // this is going to be the node in position 5
 
 for (int i = 0; i < 5; i++) {
     prev = prev->next;
@@ -129,7 +129,7 @@ the previous element, and then modify the pointers.
 Suppose we want to remove the node at position 6.
 
 ```c
-struct node *prev = L->begin;  # this is going to be the node in position 5
+struct node *prev = L->begin;  // this is going to be the node in position 5
 
 for (int i = 0; i < 5; i++) {
     prev = prev->next;
