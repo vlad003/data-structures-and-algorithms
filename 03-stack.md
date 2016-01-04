@@ -48,6 +48,10 @@ int pop(struct stack *S)
 }
 ```
 
+It is important that one checks that the stack is empty before attempting to
+pop things off. A simple `if (S->size != 0)` before the operations is
+sufficient.
+
 If you were implementing a stack using a linked list, your `push` operation
 would be identical to the `prepend` operation mentioned in the linked-list
 article, and the `pop` operation would simply be accessing the first element of
